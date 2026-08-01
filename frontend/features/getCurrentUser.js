@@ -4,10 +4,10 @@ const getCurrentUser=async () => {
     try {
         const res=await api.get("/api/me")
         if(res.status===200){
-            // return res.data;
-            console.log(res.data)
+            // console.log(res.data)
+            return res.data;
         }
-        // return null;
+        return null;
     } catch (error) {
         console.log(error)
         return null
