@@ -28,6 +28,7 @@ app.get("/api/me",protect,getCurrentUser)
 
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE));
 app.use("/api/chat", protect, proxyWithHeader(process.env.CHAT_SERVICE));
+app.use("/api/agent", protect, proxyWithHeader(process.env.AGENT_SERVICE));
 
 app.listen(PORT, () => {
     console.log(`Gateway is running on port ${PORT}`);
