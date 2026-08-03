@@ -1,8 +1,8 @@
 import { getModel } from "../config/llmModel.js";
 
 export const router = async (state) => {
-    const llm = getModel("router");
-    const prompt = `You are an intelligent Agent Router responsible for selecting the single most appropriate agent for each user request.
+    const llm = await getModel("router");
+    const systemPrompt = `You are an intelligent Agent Router responsible for selecting the single most appropriate agent for each user request.
 
 Available agents:
 - chat: General conversation, explanations, brainstorming, writing, reasoning, and Q&A.
@@ -31,7 +31,7 @@ Output only the agent name. Do not output anything else.
 User input: ${state.prompt}
 `;
 
-    const response = await llm.invoke(prompt);
+    const response = await llm.invoke(systemPrompt);
     console.log(response)
     return { ...state, agent: response.content.trim().toLowerCase() };
 };
