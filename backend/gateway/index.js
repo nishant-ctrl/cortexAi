@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import proxy from "express-http-proxy";
 import cors from "cors";
+import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import protect from "./middleware/auth.middlewaare.js";
 import { getCurrentUser } from "./controller/user.controller.js";
@@ -19,6 +20,7 @@ app.use(
     }),
 );
 app.use(cookieParser());
+app.use(morgan("dev"))
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Hello, Gateway!" });
 });

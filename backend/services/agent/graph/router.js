@@ -1,6 +1,6 @@
 import { getModel } from "../config/llmModel.js";
 
-export const router = async (state) => {
+export const routerAgent = async (state) => {
     const llm = await getModel("router");
     const systemPrompt = `You are an intelligent Agent Router responsible for selecting the single most appropriate agent for each user request.
 
@@ -32,6 +32,6 @@ User input: ${state.prompt}
 `;
 
     const response = await llm.invoke(systemPrompt);
-    console.log(response)
+    // console.log(response)
     return { ...state, agent: response.content.trim().toLowerCase() };
 };
