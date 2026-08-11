@@ -22,7 +22,7 @@ import logOut from "../../features/logOut";
 import { setUserdata } from "../redux/userSlice";
 const SideBar = () => {
     const [collapse, setCollapse] = useState(false);
-    const [imageError, serImageError] = useState(false);
+    const [imageError, setImageError] = useState(false);
     const dispatch = useDispatch();
     const { conversations, selectedConversation } = useSelector(
         (state) => state.conversation,
