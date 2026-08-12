@@ -49,7 +49,7 @@ const updateConversation = async (req, res) => {
 
 const saveMessage = async (req, res) => {
     try {
-        const { conversationId, role, content } = req.body;
+        const { conversationId, role, content , images} = req.body;
         if (!conversationId || !role || !content) {
             return res.status(400).json({ message: "Insufficiant data sent" });
         }
@@ -57,8 +57,9 @@ const saveMessage = async (req, res) => {
             conversationId: conversationId,
             role: role,
             content: content,
+            images
         });
-        return res.status(201).json(message);
+        return res.status(201).json(message);  
     } catch (error) {
         return res
             .status(500)
