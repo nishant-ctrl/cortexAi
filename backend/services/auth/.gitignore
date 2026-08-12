@@ -147,6 +147,7 @@ dist
 
 
 
+.DS_Store
 
 
 serviceAccountKey*.json
