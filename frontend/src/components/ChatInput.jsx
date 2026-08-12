@@ -58,7 +58,7 @@ const ChatInput = () => {
         dispatch(addMessages({ role: "user", content: value.trim() }));
         setValue("");
         const data = await sendMessage(payload);
-        dispatch(addMessages({ role: "assistant", content: data.answer, images:data.images }));
+        dispatch(addMessages({ role: "assistant", content: data?.answer, images:data?.images }));
         // console.log(data);
     };
     const agents = [
