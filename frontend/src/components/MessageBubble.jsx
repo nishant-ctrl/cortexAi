@@ -1,4 +1,4 @@
-import { Check, Copy, X } from "lucide-react";
+import { Check, Copy, ExternalLink, X } from "lucide-react";
 import React, { Children, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
