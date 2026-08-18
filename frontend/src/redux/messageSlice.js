@@ -14,7 +14,7 @@ const messageSlice = createSlice({
             state.messages.push(action.payload);
         },
         setArtifacts: (state, action) => {
-            state.artifacts.push(action.payload);
+            state.artifacts=action.payload;
         },
     },
 });

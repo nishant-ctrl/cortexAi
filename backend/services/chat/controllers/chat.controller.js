@@ -76,6 +76,7 @@ const getMessages = async (req, res) => {
         const messages = await Message.find({
             conversationId: conversationId,
         }) ;
+        // console.log(messages)
         return res.status(200).json(messages);
     } catch (error) {
         return res
