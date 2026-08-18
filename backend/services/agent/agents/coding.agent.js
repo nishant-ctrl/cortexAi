@@ -79,9 +79,43 @@ Rules:
 User Request:
 ${state.prompt}
         `
-        console.log("LLMLMLMLLMLML")
+        // console.log("LLMLMLMLLMLML")
         const res=await llm.invoke(prompt);
-
-        console.log(res)
+        const data=JSON.parse(res.content)
+        return {
+            ...state,
+            aiResponse: "Code generated successfully",
+            artifacts:[
+              {
+                id:Date.now(),
+                type:"Project",
+                title:state.prompt,
+                files:data.files || []
+              }
+            ]
+        };
     }
+    const res = await llm.invoke(`
+      The user's request is ${intent}
+
+      Return markdown only.
+      Never generate project files.
+
+      Use headings like:
+      # Overview
+      ## Explanation
+      ## Problems
+      ## Improvements
+      ## Best Practices
+      ## Optimized Code (if needed)
+      
+      User Request:${state.prompt}
+      `);
+
+      const data=res.content;
+      return {
+        ...state,
+        aiResponse:data,
+        artifacts:[]
+      }
 };
