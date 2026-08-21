@@ -5,7 +5,6 @@ import {
     MessageSquare,
     PanelLeftIcon,
     PanelRight,
-    PenBoxIcon,
     PenSquare,
     Plus,
     User,
@@ -20,9 +19,11 @@ import {
 } from "../redux/conversationSlice";
 import logOut from "../../features/logOut";
 import { setUserdata } from "../redux/userSlice";
+import BillngDrawer from "./BillngDrawer";
 const SideBar = () => {
     const [collapse, setCollapse] = useState(false);
     const [imageError, setImageError] = useState(false);
+    const [showBilling, setShowBilling] = useState(false);
     const dispatch = useDispatch();
     const { conversations, selectedConversation } = useSelector(
         (state) => state.conversation,
@@ -39,7 +40,7 @@ const SideBar = () => {
         const data = await createConversation();
         dispatch(addConversation(data));
     };
-    if(collapse){
+    if (collapse) {
         return (
             <div className="hidden lg:flex flex-col items-center w-[56px] h-screen bg-[#0d0f14] border-r border-white/[0.06] py-4 gap-1 shrink-0">
                 <button
@@ -51,7 +52,7 @@ const SideBar = () => {
 
                 <button
                     className="flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer mb-1"
-                    onClick={()=>dispatch(setSelectedConversation(null))}
+                    onClick={() => dispatch(setSelectedConversation(null))}
                 >
                     <Plus />
                 </button>
@@ -193,6 +194,7 @@ const SideBar = () => {
                             </div>
                             <div className="flex gap-1">
                                 <button
+                                    onClick={() => setShowBilling(true)}
                                     className="flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-yellow-600 cursor-pointer hover:bg-white/[0.08] hover:text-slate-400 transition-all duration-150
 "
                                 >
@@ -216,6 +218,10 @@ const SideBar = () => {
                     )}
                 </div>
             </div>
+            <BillngDrawer
+                open={showBilling}
+                onClose={() => setShowBilling(false)}
+            />
         </div>
     );
 };

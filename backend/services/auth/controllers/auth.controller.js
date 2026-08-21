@@ -2,7 +2,7 @@ import { getAuth } from "firebase-admin/auth";
 import { app } from "../config/firebase.js";
 import User from "../model/user.model.js";
 import redis from "../../../shared/redis/redis.js";
-import crypto from "crypto"; 
+import crypto from "crypto";
 export const login = async (req, res) => {
     try {
         const { token } = req.body;
@@ -30,6 +30,10 @@ export const login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 avatar: user.avatar,
+                plan: user.plan || "free",
+                credits: user.credits || null,
+                totalCredits: user.totalCredits || null,
+                planExpiresAt: user.planExpiresAt || null,
             }),
             "EX",
             7 * 24 * 60 * 60,
@@ -47,13 +51,48 @@ export const login = async (req, res) => {
     }
 };
 
-export const logout=async (req,res) => {
+export const logout = async (req, res) => {
     try {
-        const sessionId=req.cookies?.session
-        await redis.del (`session-${sessionId}`)
-        res.clearCookie("session")
-        res.status(200).json({message:"Logout Successfully"})
+        const sessionId = req.cookies?.session;
+        await redis.del(`session-${sessionId}`);
+        res.clearCookie("session");
+        res.status(200).json({ message: "Logout Successfully" });
     } catch (error) {
-        res.status(500).json({message:error.message})
+        res.status(500).json({ message: error.message });
     }
-}
+};
+
+export const updateUserPayment = async (req, res) => {
+    try {
+        const { plan, credits, userID } = req.body;
+        const user = await User.findById(userID);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.plan = plan;
+        user.credits += credits;
+        user.totalCredits += credits;
+        user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        await user.save();
+        const sessionId = req.cookies?.session;
+        await redis.set(
+            `session-${sessionId}`,
+            JSON.stringify({
+                userId: user._id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+                plan: user.plan,
+                credits: user.credits,
+                totalCredits: user.totalCredits,
+                planExpiresAt:user.planExpiresAt
+            }),
+            "EX",
+            7 * 24 * 60 * 60,
+        );
+
+        return res.status(200).json({success:true});
+    } catch (error) {
+        return res.status(500).json({ messagw:`update user failed: ${error}` });
+    }
+};
