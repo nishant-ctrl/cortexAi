@@ -1,9 +1,36 @@
 import React from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, color, motion } from "motion/react";
 import { Crown, X } from "lucide-react";
 import { useSelector } from "react-redux";
+import { createOrder } from "../../features/createOrder";
+import api from "../../utils/axois";
+import { verifyPayment } from "../../features/verifyPayment";
 const BillngDrawer = ({ open, onClose }) => {
     const { userData } = useSelector((state) => state.user);
+    const handleUpgrade = async (plan) => {
+        try {
+            const data = await createOrder(plan);
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: data?.order?.amount,
+                currency: data?.order?.currency,
+                order_id: data?.order?.id,
+                name: "CortexAI",
+                description: `${data?.plan?.name} Plan`,
+                handler: async (res) => {
+                    const data = await verifyPayment(res);
+                    console.log(data);
+                },
+                theme: {
+                    color: "#4F46E5",
+                },
+            };
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <AnimatePresence>
             {open && (
@@ -76,10 +103,45 @@ const BillngDrawer = ({ open, onClose }) => {
                             </div>
                         </div>
 
-                        <div>
-                            
+                        <div className="px-5 flex-1 overflow-auto space-y-4">
+                            <div className="rounded-xl border border-white/10 p-4">
+                                <h3 className="text-white font-semibold">
+                                    Starter Plan
+                                </h3>
+                                <p className="text-indigo-400 text-2xl font-bold mt-2">
+                                    ₹199
+                                </p>
+                                <p className="text-slate-400 text-sm mt-1">
+                                    500 Credits
+                                </p>
+                                <button
+                                    className="mt-4 w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 py-2 text-white"
+                                    onClick={() => handleUpgrade("starter")}
+                                >
+                                    Upgrade
+                                </button>
+                            </div>
                         </div>
 
+                        <div className="px-5 flex-1 overflow-auto space-y-4">
+                            <div className="rounded-xl border border-white/10 p-4">
+                                <h3 className="text-white font-semibold">
+                                    Pro Plan
+                                </h3>
+                                <p className="text-indigo-400 text-2xl font-bold mt-2">
+                                    ₹499
+                                </p>
+                                <p className="text-slate-400 text-sm mt-1">
+                                    1000 Credits
+                                </p>
+                                <button
+                                    className="mt-4 w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 py-2 text-white"
+                                    onClick={() => handleUpgrade("pro")}
+                                >
+                                    Upgrade
+                                </button>
+                            </div>
+                        </div>
                     </motion.div>
                 </>
             )}

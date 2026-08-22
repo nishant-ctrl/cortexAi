@@ -23,7 +23,8 @@ export const login = async (req, res) => {
             });
         }
         const sessionId = crypto.randomUUID();
-        redis.set(
+        await redis.set(`user-session-${user._id}`, sessionId);
+        await redis.set(
             `session-${sessionId}`,
             JSON.stringify({
                 userId: user._id,
@@ -64,17 +65,18 @@ export const logout = async (req, res) => {
 
 export const updateUserPayment = async (req, res) => {
     try {
-        const { plan, credits, userID } = req.body;
-        const user = await User.findById(userID);
+        const { plan, credits, userId } = req.body;
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+        // console.log("reaching...")
         user.plan = plan;
         user.credits += credits;
         user.totalCredits += credits;
         user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         await user.save();
-        const sessionId = req.cookies?.session;
+        const sessionId = await redis.get(`user-session-${user._id}`);
         await redis.set(
             `session-${sessionId}`,
             JSON.stringify({
@@ -85,14 +87,16 @@ export const updateUserPayment = async (req, res) => {
                 plan: user.plan,
                 credits: user.credits,
                 totalCredits: user.totalCredits,
-                planExpiresAt:user.planExpiresAt
+                planExpiresAt: user.planExpiresAt,
             }),
             "EX",
             7 * 24 * 60 * 60,
         );
 
-        return res.status(200).json({success:true});
+        return res.status(200).json({ success: true });
     } catch (error) {
-        return res.status(500).json({ messagw:`update user failed: ${error}` });
+        return res
+            .status(500)
+            .json({ messagw: `update user failed: ${error}` });
     }
 };
