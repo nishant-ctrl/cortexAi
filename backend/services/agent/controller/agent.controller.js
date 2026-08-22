@@ -4,6 +4,7 @@ import { addMessage } from "../config/memory.js";
 export const agent = async (req, res) => {
     try {
         const { prompt, conversationId, agent } = req.body;
+        const userId = req.headers["x-user-id"];
         if (!prompt) {
             return res.status(404).json({ message: "Prompt or id not found" });
         }
@@ -12,7 +13,7 @@ export const agent = async (req, res) => {
             role: "user",
             content: prompt,
         });
-        const result = await graph.invoke({ prompt, conversationId, agent });
+        const result = await graph.invoke({ prompt, conversationId, agent, userId });
         const response = result.aiResponse;
         await addMessage(conversationId, "user", prompt);
         await addMessage(conversationId, "assistant", response);
