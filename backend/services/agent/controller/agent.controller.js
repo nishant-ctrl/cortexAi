@@ -5,7 +5,6 @@ export const agent = async (req, res) => {
     try {
         const { prompt, conversationId, agent } = req.body;
         const file = req.file;
-
         const userId = req.headers["x-user-id"];
         if (!prompt) {
             return res.status(404).json({ message: "Prompt or id not found" });
@@ -22,6 +21,7 @@ export const agent = async (req, res) => {
             userId,
             file,
         });
+        // console.log("reaching/.....")
         const response = result.aiResponse;
         await addMessage(conversationId, "user", prompt);
         await addMessage(conversationId, "assistant", response);

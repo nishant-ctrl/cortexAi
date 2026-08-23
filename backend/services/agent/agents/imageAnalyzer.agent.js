@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { getModel } from "../config/llmModel.js";
-import fs from "fs";
+import fs from "fs/promises";
 import { deductCredits } from "../utils/deductCredits.js";
 export const imageAnalyzerAgent = async (state) => {
     try {
@@ -34,7 +34,7 @@ Do not hallucinate.`),
                     {
                         type: "image_url",
                         image_url: {
-                            url: `data:${state.file.mimtype};base64,${base64Image}`,
+                            url: `data:${state.file.mimetype};base64,${base64Image}`,
                         },
                     },
                 ],
@@ -53,6 +53,6 @@ Do not hallucinate.`),
             aiResponse: "Failed to analyze file",
         };
     } finally {
-        fs.unlink(state.file.path);
+        await fs.unlink(state.file.path);
     }
 };

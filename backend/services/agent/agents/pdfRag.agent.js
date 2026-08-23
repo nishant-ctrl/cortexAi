@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs/promises";
 import { PDFParse } from "pdf-parse";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { vectorStore } from "../config/vectorDb.js";
@@ -8,7 +8,7 @@ import { deductCredits } from "../utils/deductCredits.js";
 
 export const pdfRagAgent = async (state) => {
     try {
-        const buffer = fs.readFileSync(state.file.path);
+        const buffer = await fs.readFileSync(state.file.path);
         const parsedPdf = new PDFParse({ data: buffer });
         const result = await parsedPdf.getText();
         const text = result.text;
@@ -61,6 +61,6 @@ Use Markdown formatting.
             aiResponse: "Failed to analyze pdf",
         };
     }finally{
-        fs.unlink(state.file.path);
+        await fs.unlink(state.file.path);
     }
 };
