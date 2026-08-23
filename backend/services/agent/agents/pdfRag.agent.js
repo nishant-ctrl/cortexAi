@@ -8,22 +8,24 @@ import { deductCredits } from "../utils/deductCredits.js";
 
 export const pdfRagAgent = async (state) => {
     try {
-        const buffer = await fs.readFileSync(state.file.path);
+        const buffer = await fs.readFile(state.file.path);
         const parsedPdf = new PDFParse({ data: buffer });
         const result = await parsedPdf.getText();
         const text = result.text;
+        // console.log(text);
         const splitter = new RecursiveCharacterTextSplitter({
             chunkSize: 1000,
             chunkOverlap: 200,
         });
         const docs = await splitter.createDocuments([text]);
         const collectionName = `pdf-${Date.now()}`;
-        await vectorStore(docs, collectionName);
+        const store=await vectorStore(docs, collectionName);
 
-        const relevantDocs = await vectorStore.similaritySearch(
+        const relevantDocs = await store.similaritySearch(
             state.prompt,
             5,
         );
+        // console.log("Relevant Docs:", relevantDocs);
         const context = relevantDocs.map((d) => d.pageContent).join("\n\n");
         const llm = await getModel("pdf");
         const message = [
@@ -61,6 +63,8 @@ Use Markdown formatting.
             aiResponse: "Failed to analyze pdf",
         };
     }finally{
-        await fs.unlink(state.file.path);
+        if (state.file?.path) {
+            await fs.unlink(state.file.path).catch(() => {});
+        }
     }
 };

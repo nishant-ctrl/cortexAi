@@ -8,6 +8,7 @@ import {
     Paperclip,
     Presentation,
     Send,
+    X,
     Zap,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
@@ -27,7 +28,7 @@ const ChatInput = () => {
     const { selectedConversation } = useSelector((state) => state.conversation);
     const { messages } = useSelector((state) => state.message);
     const [selectedFile, setSelectedFile] = useState(null);
-    const fileRef=useRef(null)
+    const fileRef = useRef(null);
     const [selectedAgent, setSelectedAgent] = useState("Auto");
     const dispatch = useDispatch();
     const handleSendMessage = async () => {
@@ -52,7 +53,7 @@ const ChatInput = () => {
             );
         }
 
-        const formData=new FormData()
+        const formData = new FormData();
         formData.append("prompt", value.trim());
         formData.append("conversationId", conversation?._id);
         formData.append("agent", selectedAgent.toLowerCase());
@@ -61,6 +62,7 @@ const ChatInput = () => {
         dispatch(addMessages({ role: "user", content: value.trim() }));
         setValue("");
         const data = await sendMessage(formData);
+        setSelectedFile(null)
         dispatch(setArtifacts(data?.artifacts));
         dispatch(
             addMessages({
@@ -140,6 +142,44 @@ const ChatInput = () => {
                         );
                     })}
                 </div>
+
+                {selectedFile && (
+                    <div className="my-3">
+                        <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+                            {selectedFile?.type === "application/pdf" ? (
+                                <FileText size={16} className="text-red-400" />
+                            ) : (
+                                selectedFile.type.startsWith("image/") && (
+                                    <img
+                                        src={URL.createObjectURL(selectedFile)}
+                                        className="h-10 w-10 rounded-xl object-cover mt-3"
+                                    />
+                                )
+                            )}
+                            <div>
+                                <p className="text-sx text-white">
+                                    {selectedFile?.name}
+                                </p>
+                                <p className="text-[10px] text-slate-500">
+                                    {Math.ceil(selectedFile.size)} KB
+                                </p>
+                            </div>
+                            <button
+                                className="ml-2"
+                                onClick={() => {
+                                    setSelectedFile(null);
+                                    fileRef.current.value = "";
+                                }}
+                            >
+                                <X
+                                    size={14}
+                                    className="text-slate-500 hover:text-white cursor-pointer"
+                                />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <textarea
                     onChange={(e) => setValue(e.target.value)}
                     value={value}
