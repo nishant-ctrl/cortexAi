@@ -24,7 +24,7 @@ export const pdfRagAgent = async (state) => {
             state.prompt,
             5,
         );
-        const context = docs.map((d) => d.pageContent).join("\n\n");
+        const context = relevantDocs.map((d) => d.pageContent).join("\n\n");
         const llm = await getModel("pdf");
         const message = [
             new SystemMessage(`
