@@ -26,6 +26,8 @@ export const getModel = (agent) => {
             return groq;
         case "coding":
             return gemini;
+        case "imageAnalyzer":
+            return gemini;
         default:
             return groq;
     }

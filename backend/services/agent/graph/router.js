@@ -4,7 +4,15 @@ export const routerAgent = async (state) => {
     if (state.agent && state.agent !== "auto") {
         return { ...state, agent: state.agent };
     }
-    
+    if(state.file.mimtype==="application/pdf"){
+        return { ...state, agent: "pdfRag" };
+    }
+    if(state.file.mimtype.startsWith("image/")){
+        return { ...state, agent: "imageAnalyzer" };
+    }
+    if(state.file.mimtype==="application/pdf"){
+        return { ...state, agent: "pdfRag" };
+    }
     const llm = await getModel("router");
     const systemPrompt = `You are an intelligent Agent Router responsible for selecting the single most appropriate agent for each user request.
 
