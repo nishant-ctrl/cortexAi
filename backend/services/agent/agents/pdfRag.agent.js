@@ -5,9 +5,11 @@ import { vectorStore } from "../config/vectorDb.js";
 import { getModel } from "../config/llmModel.js";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { deductCredits } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimit.js";
 
 export const pdfRagAgent = async (state) => {
     try {
+        await checkAgentLimit(state.userId,"pdf")
         const buffer = await fs.readFile(state.file.path);
         const parsedPdf = new PDFParse({ data: buffer });
         const result = await parsedPdf.getText();
@@ -60,7 +62,7 @@ Use Markdown formatting.
         console.log(error);
         return {
             ...state,
-            aiResponse: "Failed to analyze pdf",
+            aiResponse: error.data.message || "Failed to analyze pdf",
         };
     }finally{
         if (state.file?.path) {

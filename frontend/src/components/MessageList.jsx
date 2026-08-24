@@ -40,6 +40,7 @@ const MessageList = () => {
                         ].map((s,i) => (
                             <button 
                             key={i}
+                            
                             className="text-[12px] text-slate-400 bg-white/[0.04] border border-white/[0.07] px-3 py-1.5 rounded-lg hover:bg-white/[0.08] hover:text-slate-200 transition-colors duration-150 cursor-pointer">
                                 {s}
                             </button>
