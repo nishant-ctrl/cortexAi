@@ -26,7 +26,7 @@ import { updateConversation } from "../../features/updateConversation";
 const ChatInput = () => {
     const [value, setValue] = useState("");
     const { selectedConversation } = useSelector((state) => state.conversation);
-    const { messages } = useSelector((state) => state.message);
+    const { messages,isLoading } = useSelector((state) => state.message);
     const [selectedFile, setSelectedFile] = useState(null);
     const fileRef = useRef(null);
     const [selectedAgent, setSelectedAgent] = useState("Auto");
@@ -218,7 +218,7 @@ const ChatInput = () => {
                     </div>
                     <button
                         onClick={handleSendMessage}
-                        disabled={!value.trim()}
+                        disabled={!value.trim() || isLoading}
                         className={`flex items-center justify-center w-8 h-8 rounded-lg border-none cursor-pointer transition-all duration-150 ${value.trim() ? "bg-linear-to-br from-indigo-500 to-violet-700 hover:opacity-90 text-white" : "bg-white/[0.05] text-slate-600 cursor-not-allowed"}`}
                     >
                         <Send size={16} />
