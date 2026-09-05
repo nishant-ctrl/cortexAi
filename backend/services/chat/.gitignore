@@ -75,7 +75,6 @@ web_modules/
 *.tgz
 
 .dockerignore
-Dockerfile
 
 # Yarn Integrity file
 .yarn-integrity

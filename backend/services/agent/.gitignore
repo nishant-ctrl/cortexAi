@@ -154,4 +154,3 @@ serviceAccountKey*.json
 serviceAccountKey.json
 
 .dockerignore
-Dockerfile
