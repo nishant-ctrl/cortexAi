@@ -22,7 +22,7 @@ app.use(
 app.use(cookieParser());
 app.use(morgan("dev"))
 app.get("/", (req, res) => {
-    res.status(200).json({ message: "Hello, Gateway!" });
+    res.status(200).json({ message: "Hello, Gateway! v1" });
 });
 
 app.get("/api/me",protect,getCurrentUser)
