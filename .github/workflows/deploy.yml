@@ -46,6 +46,9 @@ jobs:
                     backend
 
             # ---------- auth ----------
+            - name: write firebase service account key
+              run: |
+                echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' > backend/services/auth/serviceAccountKey.json
             - name: build & push auth
               run: |
                   docker buildx build \
@@ -86,9 +89,6 @@ jobs:
                     backend
 
             # ---------- deploys ----------
-            - name: write firebase service account key
-              run: |
-                echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' > backend/services/auth/serviceAccountKey.json
             - name: deploy gateway
               run: |
                   aws ecs update-service \
